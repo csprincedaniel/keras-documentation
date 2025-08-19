@@ -1,117 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Keras Reference</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 30px;
-    background-color: #f5f5f5;
-    color: #333;
-  }
-  h1, h2, h3 {
-    color: #222;
-  }
-  pre {
-    background-color: #eee;
-    padding: 10px;
-    border-left: 4px solid #007acc;
-    overflow-x: auto;
-  }
-  code {
-    font-family: monospace;
-  }
-  table {
-    border-collapse: collapse;
-    margin: 10px 0;
-    width: 100%;
-  }
-  table, th, td {
-    border: 1px solid #ccc;
-  }
-  th, td {
-    padding: 8px;
-    text-align: left;
-  }
-  .note {
-    background-color: #fffae6;
-    padding: 10px;
-    border-left: 4px solid #ffcc00;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Keras Practical Cheat Sheet</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; background: #f8f9fb; color: #1b1f24; }
+    h1, h2, h3 { color: #222; }
+    pre { background: #e6e8eb; padding: 12px; border-radius: 8px; overflow-x: auto; }
+    code { font-family: monospace; }
+    .example { margin-bottom: 40px; }
+    .note { background: #eef4ff; padding: 8px; border-left: 4px solid #0b6cff; margin: 8px 0; border-radius: 6px; }
+  </style>
 </head>
 <body>
+  <h1>Keras Practical Cheat Sheet</h1>
+  <p>Step-by-step examples to learn Keras Sequential models with Dense layers.</p>
 
-<h1>Mini Keras Reference</h1>
+  <div class="example">
+    <h2>1. Import libraries</h2>
+    <pre><code>from tensorflow import keras
+import numpy as np</code></pre>
+    <p>We always need TensorFlow/Keras and NumPy for handling data.</p>
+  </div>
 
-<h2>1. Creating a Model</h2>
-<p>Sequential model for simple linear regression:</p>
-<pre><code>from tensorflow import keras
-import numpy as np
+  <div class="example">
+    <h2>2. Training data basics</h2>
+    <pre><code>x = np.array([[1],[2],[3],[4],[5]], dtype=float)
+y = np.array([2,4,6,8,10], dtype=float)  # y = 2x
+print(x.shape, y.shape)  # (5, 1) (5,)
+</code></pre>
+    <p><b>Inputs</b> must be 2D arrays (samples × features). <b>Outputs</b> can be 1D for simple regression.</p>
+  </div>
 
-# Dataset
-x = np.array([[i] for i in range(1, 51)], dtype=float)
-y = np.array([2*i for i in range(1, 51)], dtype=float)
+  <div class="example">
+    <h2>3. Build a simple model</h2>
+    <pre><code>model = keras.Sequential([
+    keras.Input(shape=(1,)),  # 1 feature per sample
+    keras.layers.Dense(1)      # 1 output neuron
+])</code></pre>
+    <p>Sequential stacks layers in order. Dense(1) is enough for linear regression.</p>
+  </div>
 
-# Single neuron linear model
+  <div class="example">
+    <h2>4. Compile the model</h2>
+    <pre><code>optimizer = keras.optimizers.SGD(learning_rate=0.001)
+model.compile(optimizer=optimizer, loss="mean_squared_error")</code></pre>
+    <p>Use <code>SGD</code> for simple regression and <code>mean_squared_error</code> as loss.</p>
+  </div>
+
+  <div class="example">
+    <h2>5. Train the model</h2>
+    <pre><code>model.fit(x, y, epochs=500, verbose=0)</code></pre>
+    <p><code>epochs</code> = number of passes through the dataset. <code>verbose=0</code> suppresses output.</p>
+  </div>
+
+  <div class="example">
+    <h2>6. Make predictions</h2>
+    <pre><code>x_new = np.array([[6],[7]])
+print(model.predict(x_new))  # ~ [[12], [14]]</code></pre>
+  </div>
+
+  <div class="example">
+    <h2>7. Simple variations</h2>
+    <h3>a) y = x + 1</h3>
+    <pre><code>x = np.array([[1],[2],[3],[4],[5]], dtype=float)
+y = np.array([2,3,4,5,6], dtype=float)
+
 model = keras.Sequential([
     keras.Input(shape=(1,)),
     keras.layers.Dense(1)
 ])
-</code></pre>
-
-<h2>2. Compiling the Model</h2>
-<pre><code>optimizer = keras.optimizers.SGD(learning_rate=0.1)
-model.compile(optimizer=optimizer, loss="mean_squared_error")
-</code></pre>
-
-<h2>3. Training the Model</h2>
-<pre><code>model.fit(x, y, epochs=500, verbose=0)</code></pre>
-
-<h2>4. Making Predictions</h2>
-<pre><code>pred = model.predict(np.array([[6],[7]]))
-print(pred)  # Output: [[12.], [14.]]
-</code></pre>
-
-<h2>5. Activations</h2>
-<table>
-<tr><th>Activation</th><th>Formula</th><th>Use Case</th></tr>
-<tr><td>linear</td><td>f(x) = x</td><td>Regression, simple linear models</td></tr>
-<tr><td>relu</td><td>f(x) = max(0,x)</td><td>Hidden layers, non-linear relationships</td></tr>
-<tr><td>sigmoid</td><td>f(x) = 1 / (1 + exp(-x))</td><td>Binary classification</td></tr>
-<tr><td>softmax</td><td>f(x_i) = exp(x_i)/sum(exp(x_j))</td><td>Multi-class classification</td></tr>
-</table>
-
-<h2>6. Tips & Best Practices</h2>
-<ul>
-<li>For linear problems, a single neuron is enough.</li>
-<li>Scaling inputs and outputs prevents exploding weights.</li>
-<li>Use ReLU or other non-linear activations for hidden layers when modeling complex patterns.</li>
-<li>Set learning rate in the optimizer, not in compile.</li>
-<li>To reset a model, simply redefine it or use <code>keras.backend.clear_session()</code>.</li>
-<li>Keep dataset size and network size proportional to avoid instability.</li>
-</ul>
-
-<h2>7. Example: Scaling for Stability</h2>
-<pre><code># Scale inputs/outputs
-x_scaled = x / 50.0
-y_scaled = y / 100.0
-
-# Single neuron linear model
-model = keras.Sequential([
-    keras.Input(shape=(1,)),
-    keras.layers.Dense(1)
-])
-model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.1),
+model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.001),
               loss="mean_squared_error")
-model.fit(x_scaled, y_scaled, epochs=500, verbose=0)
-</code></pre>
+model.fit(x, y, epochs=500, verbose=0)
+print(model.predict(np.array([[10]])))  # ~11</code></pre>
 
-<div class="note">
-Note: Scaling is critical when using larger numbers or more neurons; it prevents NaN outputs.
-</div>
+    <h3>b) Nonlinear: y = x²</h3>
+    <pre><code>x = np.array([[1],[2],[3],[4],[5]], dtype=float)
+y = np.array([1,4,9,16,25], dtype=float)
 
+model = keras.Sequential([
+    keras.Input(shape=(1,)),
+    keras.layers.Dense(10, activation="relu"),  # hidden layer needed
+    keras.layers.Dense(1)
+])
+model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.001),
+              loss="mean_squared_error")
+model.fit(x, y, epochs=1000, verbose=0)
+print(model.predict(np.array([[6]])))  # ~36</code></pre>
+    <div class="note">Hidden layers are only necessary for nonlinear relationships. Linear regression does not need them.</div>
+  </div>
+
+  <div class="example">
+    <h2>8. Notes & Tips</h2>
+    <ul>
+      <li>Keep inputs as NumPy arrays, not Python lists.</li>
+      <li>Use <code>learning_rate</code> inside the optimizer, not in compile.</li>
+      <li>1 output neuron is enough for simple regression.</li>
+      <li>Increase hidden neurons only for nonlinear mappings.</li>
+    </ul>
+  </div>
 </body>
 </html>
