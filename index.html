@@ -30,6 +30,9 @@ y = np.array([2,4,6,8,10], dtype=float)  # y = 2x
 print(x.shape, y.shape)  # (5, 1) (5,)
 </code></pre>
     <p><b>Inputs</b> must be 2D arrays (samples × features). <b>Outputs</b> can be 1D for simple regression.</p>
+    <p>All a neural network does is take your inputs and outputs (x,y) as training data. It will then try to figure out what the relationshiop is between them.</p>
+    <p>It's just math. In this example, (X = 1, Y=2) or (X=2, Y=4). The neural network needs to figure out that the pattern is y=2x.</p>
+    <strong>it's just a game of numbers</strong>
   </div>
 
   <div class="example">
@@ -43,9 +46,10 @@ print(x.shape, y.shape)  # (5, 1) (5,)
 
   <div class="example">
     <h2>4. Compile the model</h2>
-    <pre><code>optimizer = keras.optimizers.SGD(learning_rate=0.001)
+    <pre><code>optimizer = keras.optimizers.SGD(learning_rate=0.001) #optional. you don't need
 model.compile(optimizer=optimizer, loss="mean_squared_error")</code></pre>
     <p>Use <code>SGD</code> for simple regression and <code>mean_squared_error</code> as loss.</p>
+    <p>You do not need optimizers. model.compile(loss="mean_squared_error") works just fine. I assume you know what a loss method is</p>
   </div>
 
   <div class="example">
